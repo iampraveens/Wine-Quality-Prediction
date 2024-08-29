@@ -1,7 +1,9 @@
 from WineQuality.constants import *
 from WineQuality.utils.common import read_yaml, create_directories
 from WineQuality.entity.config_entity import (DataIngestionConfig, 
-                                              DataValidationConfig, DataTransformationConfig)
+                                              DataValidationConfig, 
+                                              DataTransformationConfig,
+                                              ModelTrainerConfig)
 
 class ConfigurationManager:
     """
@@ -103,5 +105,35 @@ class ConfigurationManager:
         )
 
         return data_transformation_config
+    
+    def get_model_trainer_config(self) -> ModelTrainerConfig:
+        """
+        Retrieves the model trainer configuration from the ConfigurationManager object.
+        
+        This method reads the model trainer configuration from the config attribute, 
+        creates the root directory specified in the configuration if it does not exist, 
+        and returns a ModelTrainerConfig object containing the configuration details.
+        
+        Returns:
+            ModelTrainerConfig: The model trainer configuration object.
+        """
+        config = self.config.model_trainer
+        params = self.params.ElasticNet
+        schema = self.schema.TARGET_COLUMN
+        
+        create_directories([config.root_dir])
+        
+        model_trainer_config = ModelTrainerConfig(
+            root_dir= config.root_dir,
+            train_data_path= config.train_data_path,
+            test_data_path= config.test_data_path,
+            model_name= config.model_name,
+            alpha= params.alpha,
+            l1_ratio= params.l1_ratio,
+            target_column= schema.name
+            
+        )
+        
+        return model_trainer_config
         
     
